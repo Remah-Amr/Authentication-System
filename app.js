@@ -94,7 +94,7 @@ app.post('/api/login',async (req,res)=>{
 //     }
 // }
 
-mongoose.connect('mongodb+srv://remah:remah654312@cluster0-ytypa.mongodb.net/LoginSystem?retryWrites=true&w=majority',{
+mongoose.connect('mongodb+srv://remah:***********@cluster0-ytypa.mongodb.net/LoginSystem?retryWrites=true&w=majority',{
     useNewUrlParser: true , useUnifiedTopology: true
 },() => {
     console.log('mongodb connected');
