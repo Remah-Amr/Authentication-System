@@ -7,7 +7,7 @@ require('../passport')
 
 router.post('/signup',userControllers.signup)
 
-router.post('/signin',userControllers.singin)
+router.post('/signin',passport.authenticate('local',{ session:false }),userControllers.singin)
 
 router.get('/secret',passport.authenticate('jwt',{ session:false }),userControllers.secret)
 
