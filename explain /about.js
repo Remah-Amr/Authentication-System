@@ -36,4 +36,9 @@ With every req browser send than sessionID to server for allow access the recour
 IF i logout then I will terminate Session 
 Because HTTP is stateless, in order to associate a request to any other request, you need a way to store user data between HTTP requests.
 
+
+Facebook & google : 
+when I enter on my gmail or facebook on front , "access_token" will send auto in the body of request (like in form you enter submit so all data will sent in body of req)
+So when arrive to me that access token I can know which user that , and then store in database if not exists , and allow him to access recources by given him JWT
+So the goal from the access token is to know who is that ? like when we use form of "userName & password" we know who is that
 */

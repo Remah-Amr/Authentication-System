@@ -3,6 +3,7 @@ const JwtStrategy = require('passport-jwt').Strategy
 const {ExtractJwt } = require('passport-jwt')
 const LocalStrategy = require('passport-local')
 const GooglePlusTokenStrategy = require('passport-google-plus-token')
+const FacebookTokenStrategy = require('passport-facebook-token')
 const bcrypt = require('bcryptjs')
 
 const User = require('./models/user')
@@ -70,4 +71,34 @@ passport.use("googleToken",new GooglePlusTokenStrategy({
    } catch(err) {
         done(err,false,err.message)
    }
+}))
+
+
+passport.use('facebookToken',new FacebookTokenStrategy({
+    clientID: '201044157854125',
+    clientSecret: '17c0cf0d87b94cdbb51cab8f39c84616'
+},async (accessToken,refreshToken,profile,done) => {
+    console.log("profile",profile);
+    try {
+        // Check if user existing in DB
+        const existingUser = await User.findOne({'facebook.id':profile.id})
+        if(existingUser){
+            console.log('existing')
+            return done(null,existingUser)
+        }
+        console.log('not exists')
+        // save User
+        const newUser = new User({
+            method : 'facebook',
+            facebook : {
+                id : profile.id,
+                email : profile.emails[0].value
+            }
+        })
+        await newUser.save()
+        // return User
+        done(null,newUser)
+       } catch(err) {
+            done(err,false,err.message)
+       }
 }))

@@ -13,8 +13,8 @@ router.get('/secret',passport.authenticate('jwt',{ session:false }),userControll
 
 router.post('/oauth/google',passport.authenticate('googleToken',{session : false}),userControllers.googleOauth)
 
+router.post('/oauth/facebook',passport.authenticate('facebookToken',{session : false}),userControllers.facebookOauth)
+
 module.exports = router
 
 
-// 848821189810-gotr531nutova0mhrlsmd8gt9q14s3ph.apps.googleusercontent.com
-// hY0fzKsbncZa0g0pqjTNZp_F

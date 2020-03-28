@@ -40,5 +40,10 @@ module.exports = {
     googleOauth : async(req,res,next) => {
         const token = jwt.sign({ user_id : req.user._id },'remahAmr',{expiresIn : "1d"})
         res.status(200).json({token,msg:"User Logged In With google !"})
+    },
+
+    facebookOauth : async(req,res,next) => {
+        const token = jwt.sign({ user_id : req.user._id },'remahAmr',{expiresIn : "1d"})
+        res.status(200).json({token,msg:"User Logged In With facebook  !"})
     }
 }
