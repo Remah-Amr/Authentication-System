@@ -18,5 +18,12 @@ mongoose.connect('mongodb+srv://remah:remah654312@cluster0-ytypa.mongodb.net/Api
     console.log('mongodb connected')
 })
 
+app.use((error,req,res,next)=>{
+    res.json({
+        error : error.message
+    })
+    
+})
+
 // port
 app.listen(9999,()=> console.log('server started successfully !'))
