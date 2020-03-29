@@ -5,14 +5,34 @@ const bcrypt = require('bcryptjs')
 module.exports = {
     signup : async (req,res,next)=>{
         const {email , password} = req.body
-        const foundUser = await User.findOne({'local.email':email})
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(password, salt);
+        let foundUser = await User.findOne({'local.email':email})
         if(foundUser){
             return res.status(403).json({msg : "Email Already in use"})
         }
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(password, salt);
+        // Is there a Google/facebook account with the same email?
+        foundUser = await User.findOne({ 
+            $or: [
+            { "google.email": email },
+            { "facebook.email": email },
+            ] 
+        })
+        if (foundUser) {
+            // Let's merge them?
+            foundUser.methods.push('local')
+            foundUser.local = {
+            email: email, 
+            password: hash
+            }
+            await foundUser.save()
+            // Generate the token
+            const token = jwt.sign({ user_id : foundUser.id },'remahAmr',{expiresIn : "1d"})
+            return res.status(200).json({token,msg:"User Created !"})
+        }
+        // if not : =>
         const newUser = new User({
-            method : 'local',
+            methods : ['local'],
             local : {
                 email:email,
                 password:hash

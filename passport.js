@@ -50,16 +50,28 @@ passport.use("googleToken",new GooglePlusTokenStrategy({
     clientSecret : 'hY0fzKsbncZa0g0pqjTNZp_F'
 },async(accessToken,refreshToken,profile,done)=>{
    try {
-    // Check if user existing in DB
-    const existingUser = await User.findOne({'google.id':profile.id})
+    // Check if user existing in google's account
+    let existingUser = await User.findOne({'google.id':profile.id})
     if(existingUser){
         console.log('existing')
         return done(null,existingUser)
     }
     console.log('not exists')
+    
+    // if email found in DB in local's , so merge it 
+    existingUser = await User.findOne({'local.email':profile.emails[0].value})
+    if(existingUser){
+        existingUser.methods.push('google')
+        existingUser.google = {
+            id : profile.id,
+            email : profile.emails[0].value
+        }
+        await existingUser.save()
+        return done(null,existingUser)
+    }
     // save User
     const newUser = new User({
-        method : 'google',
+        methods : ['google'],
         google : {
             id : profile.id,
             email : profile.emails[0].value
@@ -80,16 +92,29 @@ passport.use('facebookToken',new FacebookTokenStrategy({
 },async (accessToken,refreshToken,profile,done) => {
     console.log("profile",profile);
     try {
-        // Check if user existing in DB
-        const existingUser = await User.findOne({'facebook.id':profile.id})
+        // Check if user existing in facebook's accounts
+        let existingUser = await User.findOne({'facebook.id':profile.id})
         if(existingUser){
             console.log('existing')
             return done(null,existingUser)
         }
-        console.log('not exists')
+        //if email found in local's accounts , so merge it 
+        existingUser = await User.findOne({'local.email':profile.emails[0].value})
+        if(existingUser){
+            existingUser.methods.push('facebook')
+            if(existingUser){
+                existingUser.facebook = {
+                    id : profile.id,
+                    email : profile.emails[0].value
+                }
+                await existingUser.save()
+                return done(null,existingUser)
+            }
+
+        }
         // save User
         const newUser = new User({
-            method : 'facebook',
+            methods : ['facebook'],
             facebook : {
                 id : profile.id,
                 email : profile.emails[0].value

@@ -1,11 +1,10 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-    method : {
-        type: String,
-        enum : ['local','facebook','google'],
-        required : true
-    },
+    methods: {
+        type: [String],
+        required: true
+      },
     local : {
         email : String,
         password : String   
