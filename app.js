@@ -2,10 +2,17 @@ const express = require('express')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const cookieParser = require('cookie-parser') // we install it to ckeck if user is Auth-ed by accessing cookies 'req.cookies'
+const cors = require('cors')
 
 const app = express()
 
 // midlleware
+app.use(cookieParser())
+app.use(cors({
+    origin:'http://localhost:3000',
+    credentials: true
+}))
 app.use(morgan('dev'))
 app.use(bodyParser.json())
 

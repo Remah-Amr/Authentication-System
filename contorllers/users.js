@@ -28,7 +28,8 @@ module.exports = {
             await foundUser.save()
             // Generate the token
             const token = jwt.sign({ user_id : foundUser.id },'remahAmr',{expiresIn : "1d"})
-            return res.status(200).json({token,msg:"User Created !"})
+            res.cookie('access_token',token)
+            return res.status(200).json({msg:"User Created !"})
         }
         // if not : =>
         const newUser = new User({
@@ -42,13 +43,15 @@ module.exports = {
         await newUser.save()
         // here I generate token to user because if I don't to login after signUp , so I create token to him for access recourses
         const token = jwt.sign({ user_id : newUser.id },'remahAmr',{expiresIn : "1d"})
-        res.status(200).json({token,msg:"User Created !"})
+        res.cookie('access_token',token)
+        res.status(200).json({msg:"User Created !"})
     },
     
     singin : async (req,res,next) => {
         // I enter here If he pass the localStrategy authentication
         const token = jwt.sign({ user_id : req.user._id },'remahAmr',{expiresIn : "1d"})
-        res.status(200).json({token,msg:"User Logged In Locally!"})
+        res.cookie('access_token',token)
+        res.status(200).json({msg:"User Logged In Locally!"})
     },
 
     secret : async (req,res,next)=>{
@@ -59,11 +62,20 @@ module.exports = {
 
     googleOauth : async(req,res,next) => {
         const token = jwt.sign({ user_id : req.user._id },'remahAmr',{expiresIn : "1d"})
-        res.status(200).json({token,msg:"User Logged In With google !"})
+        res.cookie('access_token',token)
+        res.status(200).json({msg:"User Logged In With google !"})
     },
 
     facebookOauth : async(req,res,next) => {
         const token = jwt.sign({ user_id : req.user._id },'remahAmr',{expiresIn : "1d"})
-        res.status(200).json({token,msg:"User Logged In With facebook  !"})
+        res.cookie('access_token',token)
+        res.status(200).json({msg:"User Logged In With facebook  !"})
+    },
+    
+    logout : async (req,res,next) => {
+        res.clearCookie('access_token')
+        res.json({
+            msg : "you logged out successfully !"
+        })
     }
 }

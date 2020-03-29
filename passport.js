@@ -8,8 +8,17 @@ const bcrypt = require('bcryptjs')
 
 const User = require('./models/user')
 
+const cookieExtractor = req => {
+    let token = null
+    if(req && req.cookies){
+        token = req.cookies['access_token']        
+    }
+    return token
+}
+
 passport.use(new JwtStrategy({
-    jwtFromRequest : ExtractJwt.fromHeader('authorization'),
+    // jwtFromRequest : ExtractJwt.fromHeader('authorization'),// here I store cookie in localStorage
+    jwtFromRequest: cookieExtractor,
     secretOrKey : 'remahAmr'    
 },async (payload,done) => { // if token verified correctly , so will enter to this function
     try{
@@ -47,9 +56,11 @@ passport.use(new LocalStrategy({
 // after that I will generate token to him for access any recources he need 
 passport.use("googleToken",new GooglePlusTokenStrategy({
     clientID : '848821189810-gotr531nutova0mhrlsmd8gt9q14s3ph.apps.googleusercontent.com',
-    clientSecret : 'hY0fzKsbncZa0g0pqjTNZp_F'
-},async(accessToken,refreshToken,profile,done)=>{
+    clientSecret : 'hY0fzKsbncZa0g0pqjTNZp_F',
+    passReqToCallback : true,
+},async(req,accessToken,refreshToken,profile,done)=>{
    try {
+    // You can pass req "To All Passport Functions" to see if user already logged in or not , type => console.log(req)
     // Check if user existing in google's account
     let existingUser = await User.findOne({'google.id':profile.id})
     if(existingUser){

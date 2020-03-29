@@ -15,6 +15,8 @@ router.post('/oauth/google',passport.authenticate('googleToken',{session : false
 
 router.post('/oauth/facebook',passport.authenticate('facebookToken',{session : false}),userControllers.facebookOauth)
 
+router.post('/logout',userControllers.logout)
+
 module.exports = router
 
 
